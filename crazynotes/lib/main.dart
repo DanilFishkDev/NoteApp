@@ -45,7 +45,14 @@ class _NoteCreatorState extends State<NoteCreator> {
       appBar: AppBar(
         title: Text("Notes Manager"),
       ),
-      body: _buildNotes(),
+      body: ListView.builder(
+        itemCount: globals.NoteList.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text('${globals.NoteList[index]}')
+          );
+        }
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           noteEnter(context);
