@@ -113,6 +113,7 @@ class _noteEntryState extends State<noteEntry> {
                   onPressed: () {
                     if(_formKey.currentState.validate()) {
                       globals.noteTile = note;
+                      globals.NoteList.add(note);
                       Navigator.pop(context);
                     }
                   },
