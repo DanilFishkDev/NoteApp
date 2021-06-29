@@ -58,10 +58,11 @@ class _NoteCreatorState extends State<NoteCreator> {
         }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          Function moving;
-          moving = await Navigator.pushNamed(context, '/entry');
-          moving();
+        onPressed: ()  {
+         // Function moving;
+         // moving = await Navigator.pushNamed(context, '/entry');
+         // moving();
+          Navigator.pushNamed(context, '/entry');
         },
         child: const Icon(Icons.assignment_sharp),
         backgroundColor: Colors.greenAccent,
