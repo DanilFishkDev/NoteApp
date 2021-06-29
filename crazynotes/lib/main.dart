@@ -130,9 +130,7 @@ class _noteEntryState extends State<noteEntry> {
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: ElevatedButton(
                     onPressed: () {
-                      if(_formKey.currentState.validate()) {
                         Navigator.pop(context);
-                      }
                     },
                     child: Text('Back'),
                   )
