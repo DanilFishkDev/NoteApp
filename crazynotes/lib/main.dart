@@ -121,7 +121,9 @@ class _noteEntryState extends State<noteEntry> {
                     if(_formKey.currentState.validate()) {
                       globals.noteTile = note;
                       globals.NoteList.add(note);
-                      Navigator.pop(context);
+                      Navigator.pop(context, () {
+                        setState(() {});
+                      });
                     }
                   },
                   child: Text("Add"),
