@@ -58,11 +58,8 @@ class _NoteCreatorState extends State<NoteCreator> {
         }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: ()  {
-         // Function moving;
-         // moving = await Navigator.pushNamed(context, '/entry');
-         // moving();
-          Navigator.pushNamed(context, '/entry');
+        onPressed: () {
+         Navigator.pushNamed(context, '/entry');
         },
         child: const Icon(Icons.assignment_sharp),
         backgroundColor: Colors.greenAccent,
@@ -129,9 +126,9 @@ class _noteEntryState extends State<noteEntry> {
                     if(_formKey.currentState.validate()) {
                       globals.noteTile = note;
                       globals.NoteList.add(note);
-                      Navigator.pop(context, () {
-                        setState(() {});
-                      });
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, '/');
                     }
                   },
                   child: Text("Add"),
