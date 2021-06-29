@@ -27,7 +27,11 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: NoteCreator(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => NoteCreator(),
+        '/entry': (context) => NoteEnter(),
+      }
     );
   }
 }
@@ -54,30 +58,33 @@ class _NoteCreatorState extends State<NoteCreator> {
         }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          noteEnter(context);
+        onPressed: () async {
+          Function moving;
+          moving = await Navigator.pushNamed(context, '/entry');
+          moving();
         },
         child: const Icon(Icons.assignment_sharp),
         backgroundColor: Colors.greenAccent,
       ),
     );
   }
-  Widget _buildNotes() {
-    //ListView Building
-    return Container();
+}
+
+class NoteEnter extends StatefulWidget {
+  @override
+  _NoteEnterState createState() => _NoteEnterState();
+}
+
+class _NoteEnterState extends State<NoteEnter> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Enter your note!")),
+      body: noteEntry(),
+    );
   }
 }
 
-noteEnter(context) {
-  Navigator.push(context, MaterialPageRoute<void> (
-    builder: (BuildContext context) {
-      return Scaffold(
-        appBar: AppBar(title: Text("Enter your note!")),
-        body: noteEntry(),
-      );
-    }
-  ) );
-}
 
 class noteEntry extends StatefulWidget {
 
