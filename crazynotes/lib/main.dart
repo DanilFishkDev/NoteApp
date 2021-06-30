@@ -44,6 +44,12 @@ class NoteCreator extends StatefulWidget {
 }
 
 class _NoteCreatorState extends State<NoteCreator> {
+
+  void backupFetch() async {
+    final backup = await SharedPreferences.getInstance();
+    globals.NoteList = backup.getStringList('storage') ?? 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
