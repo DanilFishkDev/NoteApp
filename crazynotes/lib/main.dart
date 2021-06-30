@@ -45,9 +45,17 @@ class NoteCreator extends StatefulWidget {
 
 class _NoteCreatorState extends State<NoteCreator> {
 
+  @override
+  void initState() {
+    super.initState();
+    backupFetch();
+  }
+
   void backupFetch() async {
     final backup = await SharedPreferences.getInstance();
-    globals.NoteList = backup.getStringList('storage') ?? 0;
+    setState(() {
+      globals.NoteList = backup.getStringList('storage') ?? 0;
+    });
   }
 
   @override
@@ -106,7 +114,6 @@ class _noteEntryState extends State<noteEntry> {
   String note;
 
 
-
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -135,10 +142,12 @@ class _noteEntryState extends State<noteEntry> {
                   onPressed: () {
                     if(_formKey.currentState.validate()) {
                       globals.noteTile = note;
-                      globals.NoteList.add(note);
                       void dataSaving() async {
                         final backup = await SharedPreferences.getInstance();
-                        backup.setStringList('storage', globals.NoteList);
+                        setState(() {
+                          globals.NoteList.add(note);
+                          backup.setStringList('storage', globals.NoteList);
+                        });
                       };
                       dataSaving();
                       Navigator.pop(context);
