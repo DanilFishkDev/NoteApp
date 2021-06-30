@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'globals.dart' as globals;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -84,6 +85,7 @@ class _NoteEnterState extends State<NoteEnter> {
 }
 
 
+
 class noteEntry extends StatefulWidget {
 
   noteEntry({Key key}) : super(key: key);
@@ -122,10 +124,12 @@ class _noteEntryState extends State<noteEntry> {
             child: Row(
               children: <Widget>[
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if(_formKey.currentState.validate()) {
                       globals.noteTile = note;
                       globals.NoteList.add(note);
+                      final backup = await SharedPreferences.getInstance();
+                      backup.setStringList('storage', globals.NoteList);
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pushNamed(context, '/');
