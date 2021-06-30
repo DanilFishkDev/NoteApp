@@ -105,6 +105,8 @@ class _noteEntryState extends State<noteEntry> {
   final _formKey = GlobalKey<FormState>();
   String note;
 
+
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -130,12 +132,15 @@ class _noteEntryState extends State<noteEntry> {
             child: Row(
               children: <Widget>[
                 ElevatedButton(
-                  onPressed: () async {
+                  onPressed: () {
                     if(_formKey.currentState.validate()) {
                       globals.noteTile = note;
                       globals.NoteList.add(note);
-                      final backup = await SharedPreferences.getInstance();
-                      backup.setStringList('storage', globals.NoteList);
+                      void dataSaving() async {
+                        final backup = await SharedPreferences.getInstance();
+                        backup.setStringList('storage', globals.NoteList);
+                      };
+                      dataSaving();
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pushNamed(context, '/');
