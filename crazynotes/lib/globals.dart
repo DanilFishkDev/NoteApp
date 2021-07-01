@@ -2,4 +2,6 @@ library crazynotes.globals;
 
 String noteTile = '';
 
-var NoteList = [];
+List<String> NoteList = [];
+
+List<String> noteBook = [];

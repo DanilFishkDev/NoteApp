@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'globals.dart' as globals;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(MyApp());
@@ -43,6 +44,20 @@ class NoteCreator extends StatefulWidget {
 }
 
 class _NoteCreatorState extends State<NoteCreator> {
+
+  @override
+  void initState() {
+    super.initState();
+    backupFetch();
+  }
+
+  void backupFetch() async {
+    final backup = await SharedPreferences.getInstance();
+    setState(() {
+      globals.NoteList = backup.getStringList('storage') ?? 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +99,7 @@ class _NoteEnterState extends State<NoteEnter> {
 }
 
 
+
 class noteEntry extends StatefulWidget {
 
   noteEntry({Key key}) : super(key: key);
@@ -96,6 +112,7 @@ class _noteEntryState extends State<noteEntry> {
 
   final _formKey = GlobalKey<FormState>();
   String note;
+
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +142,14 @@ class _noteEntryState extends State<noteEntry> {
                   onPressed: () {
                     if(_formKey.currentState.validate()) {
                       globals.noteTile = note;
-                      globals.NoteList.add(note);
+                      void dataSaving() async {
+                        final backup = await SharedPreferences.getInstance();
+                        setState(() {
+                          globals.NoteList.add(note);
+                          backup.setStringList('storage', globals.NoteList);
+                        });
+                      };
+                      dataSaving();
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pushNamed(context, '/');
