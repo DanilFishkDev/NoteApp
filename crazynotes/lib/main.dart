@@ -70,7 +70,22 @@ class _NoteCreatorState extends State<NoteCreator> {
           if (i.isOdd) return Divider();
           final index = i ~/ 2;
           return ListTile(
-            title: Text('${globals.NoteList[index]}')
+            title: Text('${globals.NoteList[index]}'),
+            trailing: ElevatedButton(
+              onPressed: () {
+                void noteDeletion() async {
+                  final backup = await SharedPreferences.getInstance();
+                  setState(() {
+                    globals.NoteList.removeAt(index);
+                    backup.setStringList('storage', globals.NoteList);
+                  });
+                }
+                noteDeletion();
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/');
+              },
+              child: const Icon(Icons.remove),
+            )
           );
         }
       ),
