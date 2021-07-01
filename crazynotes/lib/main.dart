@@ -65,8 +65,10 @@ class _NoteCreatorState extends State<NoteCreator> {
         title: Text("Notes Manager"),
       ),
       body: ListView.builder(
-        itemCount: globals.NoteList.length,
-        itemBuilder: (context, index) {
+        itemCount: globals.NoteList.length * 2,
+        itemBuilder: (context, i) {
+          if (i.isOdd) return Divider();
+          final index = i ~/ 2;
           return ListTile(
             title: Text('${globals.NoteList[index]}')
           );
