@@ -70,7 +70,13 @@ class _NoteCreatorState extends State<NoteCreator> {
           if (i.isOdd) return Divider();
           final index = i ~/ 2;
           return ListTile(
-            title: Text('${globals.NoteList[index]}')
+            title: Text('${globals.NoteList[index]}'),
+            trailing: ElevatedButton(
+              onPressed: () {
+                //removing note method
+              },
+              child: const Icon(Icons.remove),
+            )
           );
         }
       ),
