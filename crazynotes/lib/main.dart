@@ -73,7 +73,16 @@ class _NoteCreatorState extends State<NoteCreator> {
             title: Text('${globals.NoteList[index]}'),
             trailing: ElevatedButton(
               onPressed: () {
-                //removing note method
+                void noteDeletion() async {
+                  final backup = await SharedPreferences.getInstance();
+                  setState(() {
+                    globals.NoteList.removeAt(index);
+                    backup.setStringList('storage', globals.NoteList);
+                  });
+                }
+                noteDeletion();
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/');
               },
               child: const Icon(Icons.remove),
             )
