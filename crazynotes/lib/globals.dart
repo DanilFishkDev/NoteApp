@@ -4,4 +4,4 @@ String noteTile = '';
 
 List<String> NoteList = [];
 
-List<String> noteBook = [];
+int signed = 0;
