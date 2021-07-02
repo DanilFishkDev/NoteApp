@@ -109,7 +109,7 @@ class _NoteCreatorState extends State<NoteCreator> {
             ListTile(
               title: Text('Profile'),
               onTap: () {
-                //alertDialog with options Sign Up and Sign In (if user not yet logged in) or
+                loginDialog(context);
                 //alertDielog with option Logout if user in account.
               }
             ),
@@ -136,6 +136,53 @@ class _NoteCreatorState extends State<NoteCreator> {
       )
     );
   }
+}
+
+loginDialog(BuildContext context) {
+  Widget Register = TextButton(
+    onPressed: () {
+      //to signUp form
+    },
+    child: Text('Sign Up'),
+  );
+
+  Widget Login = TextButton(
+    onPressed: () {
+      //to Login form
+    },
+    child: Text('Sign In'),
+  );
+
+  Widget exit = TextButton(
+    onPressed: () {
+      //logout
+    },
+    child: Text('Logout'),
+  );
+
+  Widget alert = AlertDialog(
+    title: Text('Welcome'),
+    content: Column(
+      children: <Widget>[
+        Text('Welcome to NoteManager'),
+        Text('If you are new create the account with sign up option'),
+        Text('If you already have an account you can login with sign in option or'),
+        Text('if you want to logout from your account use the Logout button'),
+      ]
+    ),
+    actions: [
+      Register,
+      Login,
+      exit
+    ]
+  );
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    }
+  );
 }
 
 class NoteEnter extends StatefulWidget {
