@@ -96,6 +96,44 @@ class _NoteCreatorState extends State<NoteCreator> {
         child: const Icon(Icons.assignment_sharp),
         backgroundColor: Colors.greenAccent,
       ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.deepOrangeAccent,
+              ),
+              child: Text('Menu'),
+            ),
+            ListTile(
+              title: Text('Profile'),
+              onTap: () {
+                //alertDialog with options Sign Up and Sign In (if user not yet logged in) or
+                //alertDielog with option Logout if user in account.
+              }
+            ),
+            ListTile(
+              title: Text('Save in file'),
+              onTap: () {
+                //saving notes in file (only with login working)
+              }
+            ),
+            ListTile(
+              title: Text('Clear the notes'),
+              onTap: () {
+                //remove the notes from app (with alertDialog for confirmation the action)
+              }
+            ),
+            ListTile(
+              title: Text('Options'),
+              onTap: () {
+                //new screen with options such as dark theme, fonts etc
+              }
+            )
+          ]
+        )
+      )
     );
   }
 }
