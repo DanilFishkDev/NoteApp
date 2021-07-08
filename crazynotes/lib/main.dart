@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
   runApp(MyApp());
 }
 
