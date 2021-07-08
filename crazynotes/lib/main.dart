@@ -36,6 +36,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => NoteCreator(),
         '/entry': (context) => NoteEnter(),
         '/usrNotes': (context) => userNoteEnter(),
+        '/register': (context) => toRegister(),
+        '/login': (context) => toLogin(),
       }
     );
   }
@@ -145,14 +147,14 @@ class _NoteCreatorState extends State<NoteCreator> {
 loginDialog(BuildContext context) {
   Widget Register = TextButton(
     onPressed: () {
-     signUp();
+     Navigator.pushNamed(context, '/register');
     },
     child: Text('Sign Up'),
   );
 
   Widget Login = TextButton(
     onPressed: () {
-      login();
+      Navigator.pushNamed(context, '/login');
     },
     child: Text('Sign In'),
   );
@@ -189,7 +191,26 @@ loginDialog(BuildContext context) {
   );
 }
 
+class toRegister extends StatefulWidget {
+  @override
+  _toRegisterState createState() => _toRegisterState();
+}
+
+class _toRegisterState extends State<toRegister> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Registration instance")),
+      body: signUp(),
+    );
+  }
+}
+
+
 class signUp extends StatefulWidget {
+
+  signUp({Key key}) : super(key: key);
+
   @override
   _signUpState createState() => _signUpState();
 }
@@ -257,12 +278,12 @@ class _signUpState extends State<signUp> {
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      if(_formKey.currentState.validate()) {
+
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.pushNamed(context, '/');
-                      }
+
                     },
                     child: Text("Back to main screen"),
                   )
@@ -273,8 +294,27 @@ class _signUpState extends State<signUp> {
   }
 }
 
+class toLogin extends StatefulWidget {
+  @override
+  _toLoginState createState() => _toLoginState();
+}
+
+class _toLoginState extends State<toLogin> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Logging in session")),
+      body: login(),
+    );
+  }
+}
+
+
 
 class login extends StatefulWidget {
+
+  login({Key key}) : super(key: key);
+
   @override
   _loginState createState() => _loginState();
 }
@@ -346,13 +386,11 @@ class _loginState extends State<login> {
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: ElevatedButton(
-                    onPressed: () async {
-                      if(_formKey.currentState.validate()) {
+                    onPressed: ()  {
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.pop(context);
                         Navigator.pushNamed(context, '/');
-                      }
                     },
                     child: Text("Back to main screen"),
                   )
