@@ -144,7 +144,7 @@ class _NoteCreatorState extends State<NoteCreator> {
 loginDialog(BuildContext context) {
   Widget Register = TextButton(
     onPressed: () {
-      //to signUp form
+     signUp();
     },
     child: Text('Sign Up'),
   );
@@ -187,6 +187,89 @@ loginDialog(BuildContext context) {
     }
   );
 }
+
+class signUp extends StatefulWidget {
+  @override
+  _signUpState createState() => _signUpState();
+}
+
+class _signUpState extends State<signUp> {
+
+  final _formKey = GlobalKey<FormState>();
+
+  String username;
+  String pwd;
+  List<String> userNotes;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+        key: _formKey,
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextFormField(
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.account_box),
+                    labelText: "Create your username for your new account",
+                    hintText: "Enter your name",
+                  ),
+                  validator: (String value) {
+                    username = value;
+                    if(value.isEmpty) {
+                      return "Please type the name";
+                    }
+                    return null;
+                  }
+              ),
+              TextFormField(
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.account_box),
+                    labelText: "Come up with your password",
+                    hintText: "Type the password",
+                  ),
+                  validator: (String value) {
+                    pwd = value;
+                    if(value.isEmpty) {
+                      return "Please type the name";
+                    }
+                    return null;
+                  }
+              ),
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if(_formKey.currentState.validate()) {
+                        var user = await Hive.openBox(username);
+                        user.put('name', username);
+                        user.put('password', pwd);
+                        user.put('notes', userNotes);
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text("Sign Up"),
+                  )
+              ),
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if(_formKey.currentState.validate()) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Text("Back to main screen"),
+                  )
+              )
+            ]
+        )
+    );
+  }
+}
+
 
 class NoteEnter extends StatefulWidget {
   @override
