@@ -35,6 +35,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => NoteCreator(),
         '/entry': (context) => NoteEnter(),
+        '/usrNotes': (context) => userNoteEnter(),
       }
     );
   }
@@ -151,7 +152,7 @@ loginDialog(BuildContext context) {
 
   Widget Login = TextButton(
     onPressed: () {
-      //to Login form
+      login();
     },
     child: Text('Sign In'),
   );
@@ -259,6 +260,8 @@ class _signUpState extends State<signUp> {
                       if(_formKey.currentState.validate()) {
                         Navigator.pop(context);
                         Navigator.pop(context);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/');
                       }
                     },
                     child: Text("Back to main screen"),
@@ -269,6 +272,109 @@ class _signUpState extends State<signUp> {
     );
   }
 }
+
+
+class login extends StatefulWidget {
+  @override
+  _loginState createState() => _loginState();
+}
+
+class _loginState extends State<login> {
+
+  final _formKey = GlobalKey<FormState>();
+
+  String login;
+  String pass;
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+        key: _formKey,
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextFormField(
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.account_box),
+                    labelText: "Enter your username",
+                    hintText: "Type your name that you entered in sign Up form",
+                  ),
+                  validator: (String value) {
+                    login = value;
+                    if(value.isEmpty) {
+                      return "Please type the name";
+                    }
+                    return null;
+                  }
+              ),
+              TextFormField(
+                  decoration: const InputDecoration(
+                    icon: Icon(Icons.account_box),
+                    labelText: "Enter the password",
+                    hintText: "Type the password related to your profile",
+                  ),
+                  validator: (String value) {
+                    pass = value;
+                    if(value.isEmpty) {
+                      return "Please type the name";
+                    }
+                    return null;
+                  }
+              ),
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if(_formKey.currentState.validate()) {
+                        var registered = Hive.box(login);
+                        var regName = registered.get('name');
+                        if (regName == null) {
+                          return 'Please enter the correct name';
+                        } else {
+                          var regPwd = registered.get('password');
+                          if(regPwd == pass) {
+                            Navigator.pushNamed(context, '/usrNotes');
+                          } else {
+                            return "Enter the correct password";
+                          }
+                        }
+                      }
+                    },
+                    child: Text("Sign In"),
+                  )
+              ),
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      if(_formKey.currentState.validate()) {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/');
+                      }
+                    },
+                    child: Text("Back to main screen"),
+                  )
+              )
+            ]
+        )
+    );
+  }
+}
+
+class userNoteEnter extends StatefulWidget {
+  @override
+  _userNoteEnterState createState() => _userNoteEnterState();
+}
+
+class _userNoteEnterState extends State<userNoteEnter> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
 
 
 class NoteEnter extends StatefulWidget {
