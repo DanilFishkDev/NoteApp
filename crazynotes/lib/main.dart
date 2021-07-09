@@ -342,7 +342,7 @@ class _loginState extends State<login> {
                   validator: (String value) {
                     login = value;
                     if(value.isEmpty) {
-                      return "Please type the name";
+                      return "Please type the username";
                     }
                     return null;
                   }
@@ -356,7 +356,7 @@ class _loginState extends State<login> {
                   validator: (String value) {
                     pass = value;
                     if(value.isEmpty) {
-                      return "Please type the name";
+                      return "Please type password";
                     }
                     return null;
                   }
@@ -364,18 +364,18 @@ class _loginState extends State<login> {
               Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if(_formKey.currentState.validate()) {
-                        var registered = Hive.box(login);
+                        var registered = await Hive.openBox(login);
                         var regName = registered.get('name');
                         if (regName == null) {
-                          return 'Please enter the correct name';
+                          loginError(context);
                         } else {
                           var regPwd = registered.get('password');
                           if(regPwd == pass) {
                             Navigator.pushNamed(context, '/usrNotes');
                           } else {
-                            return "Enter the correct password";
+                            loginError(context);
                           }
                         }
                       }
@@ -399,6 +399,49 @@ class _loginState extends State<login> {
         )
     );
   }
+}
+
+loginError(BuildContext context) {
+  Widget ret = TextButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    child: Text('Try again'),
+  );
+  Widget toReg = TextButton(
+    onPressed: () {
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pop(context);
+      Navigator.pushNamed(context, '/register');
+    },
+    child: Text('Sign Up'),
+  );
+  Widget alert = AlertDialog(
+    title: Text('Whooooops!'),
+    content: Column(
+      children: <Widget>[
+        Text('It seems to be that you'),
+        Text('put the wrong username or'),
+        Text('password.'),
+        Text('Please make sure to check'),
+        Text('your login data and sign in'),
+        Text('Dont have an account?'),
+        Text('Then you can go sign up'),
+      ]
+    ),
+    actions: [
+      ret,
+      toReg
+    ]
+  );
+
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      }
+  );
 }
 
 class userNoteEnter extends StatefulWidget {
