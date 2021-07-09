@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/usrNotes': (context) => userNoteEnter(),
         '/register': (context) => toRegister(),
         '/login': (context) => toLogin(),
+        '/userNoteEntry': (context) => userNoteCreate(),
       }
     );
   }
@@ -159,13 +160,6 @@ loginDialog(BuildContext context) {
     child: Text('Sign In'),
   );
 
-  Widget exit = TextButton(
-    onPressed: () {
-      //logout
-    },
-    child: Text('Logout'),
-  );
-
   Widget alert = AlertDialog(
     title: Text('Welcome'),
     content: Column(
@@ -173,13 +167,11 @@ loginDialog(BuildContext context) {
         Text('Welcome to NoteManager'),
         Text('If you are new create the account with sign up option'),
         Text('If you already have an account you can login with sign in option or'),
-        Text('if you want to logout from your account use the Logout button'),
       ]
     ),
     actions: [
       Register,
-      Login,
-      exit
+      Login
     ]
   );
 
@@ -221,7 +213,7 @@ class _signUpState extends State<signUp> {
 
   String username;
   String pwd;
-  List<String> userNotes;
+  List<String> userNotes = [];
 
   @override
   Widget build(BuildContext context) {
@@ -373,6 +365,13 @@ class _loginState extends State<login> {
                         } else {
                           var regPwd = registered.get('password');
                           if(regPwd == pass) {
+                            void usernameSave() async {
+                              final usrSave = await SharedPreferences.getInstance();
+                              setState(() {
+                                usrSave.setString('names', login);
+                              });
+                            };
+                            usernameSave();
                             Navigator.pushNamed(context, '/usrNotes');
                           } else {
                             loginError(context);
@@ -450,11 +449,237 @@ class userNoteEnter extends StatefulWidget {
 }
 
 class _userNoteEnterState extends State<userNoteEnter> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+
+  void loadUserData() async {
+    final usrSave = await SharedPreferences.getInstance();
+    setState(() {
+      globals.nickname = usrSave.getString('names') ?? 0;
+    });
+    globals.account = await Hive.openBox(globals.nickname);
+    globals.userNotes = globals.account.get('notes');
+  }
+
+  var usrnam = globals.account.get('name');
+
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+        appBar: AppBar(
+          title: Text("user Notes Handler"),
+        ),
+
+        body: ListView.builder(
+
+            itemCount: globals.userNotes.length * 2,
+            itemBuilder: (context, i) {
+              if(globals.userNotes.length == null) {
+                return null;
+              } else {
+                if (i.isOdd) return Divider();
+                final index = i ~/ 2;
+                return ListTile(
+                    title: Text('${globals.userNotes[index]}'),
+                    trailing: ElevatedButton(
+                      onPressed: () {
+                        void noteDeletion() async {
+
+                          globals.userNotes.removeAt(index);
+                          globals.account.put('notes', globals.userNotes);
+
+                        }
+                        noteDeletion();
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/');
+                      },
+                      child: const Icon(Icons.remove),
+                    )
+                );
+              }
+
+            }
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/userNoteEntry');
+          },
+          child: const Icon(Icons.assignment_sharp),
+          backgroundColor: Colors.greenAccent,
+        ),
+        drawer: Drawer(
+            child: ListView(
+                padding: EdgeInsets.zero,
+                children: <Widget>[
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Colors.deepOrangeAccent,
+                    ),
+                    child: Text('Menu'),
+                  ),
+                  ListTile(
+                      title: Text('Logout'),
+                      onTap: () {
+                        logoutDialog(context);
+                      }
+                  ),
+                  ListTile(
+                      title: Text('Save in file'),
+                      onTap: () {
+                        //saving notes in file (only with login working)
+                      }
+                  ),
+                  ListTile(
+                      title: Text('Clear the notes'),
+                      onTap: () {
+                        //remove the notes from app (with alertDialog for confirmation the action)
+                      }
+                  ),
+                  ListTile(
+                      title: Text('Options'),
+                      onTap: () {
+                        //new screen with options such as dark theme, fonts etc
+                      }
+                  )
+                ]
+            )
+        )
+    );
   }
 }
+
+logoutDialog(BuildContext context) {
+  Widget logout = TextButton(
+    onPressed: () async {
+      await globals.account.close();
+      userDataRem() async {
+        final usrSave = await SharedPreferences.getInstance();
+          usrSave.setString('names', '');
+          globals.nickname = '';
+      };
+      userDataRem();
+      Navigator.pushNamed(context, '/');
+    },
+    child: Text('YES'),
+  );
+  Widget back = TextButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    child: Text('NO!'),
+  );
+
+  Widget alert = AlertDialog(
+    title: Text('Leaving the account'),
+    content: Column(
+      children: <Widget>[
+        Text('Are you sure to leave your account now?'),
+        Text('You still can cancel this action by pressing the NO! button'),
+      ]
+    ),
+    actions: [
+      logout,
+      back
+    ]
+  );
+
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      }
+  );
+}
+
+class userNoteCreate extends StatefulWidget {
+  @override
+  _userNoteCreateState createState() => _userNoteCreateState();
+}
+
+class _userNoteCreateState extends State<userNoteCreate> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Enter your note!")),
+      body: usrNoteAdd(),
+    );
+  }
+}
+
+class usrNoteAdd extends StatefulWidget {
+
+  usrNoteAdd({Key key}) : super(key: key);
+
+  @override
+  _usrNoteAddState createState() => _usrNoteAddState();
+}
+
+class _usrNoteAddState extends State<usrNoteAdd> {
+  final _formKey = GlobalKey<FormState>();
+  String note;
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+        key: _formKey,
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              TextFormField(
+                decoration: const InputDecoration(
+                  icon: Icon(Icons.assignment_outlined),
+                  labelText: "Enter the note, user",
+                ),
+                validator: (String value) {
+                  note = value;
+                  if(value.isEmpty) {
+                    return "Please type the note in order to add new note, else press the Back button";
+                  }
+                  return null;
+                },
+              ),
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Row(
+                      children: <Widget>[
+                        ElevatedButton(
+                          onPressed: () {
+                            if(_formKey.currentState.validate()) {
+                              globals.noteTile = note;
+                              globals.userNotes.add(note);
+                              globals.account.put('notes', globals.userNotes);
+                              Navigator.pop(context);
+                              Navigator.pop(context);
+                              Navigator.pushNamed(context, '/');
+                            }
+                          },
+                          child: Text("Add"),
+                        ),
+                        Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Back'),
+                            )
+                        )
+                      ]
+                  )
+              )
+            ]
+        )
+    );
+  }
+}
+
 
 
 
