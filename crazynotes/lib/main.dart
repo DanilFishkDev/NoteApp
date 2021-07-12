@@ -255,12 +255,13 @@ class _signUpState extends State<signUp> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if(_formKey.currentState.validate()) {
-                        var simuser = await Hive.openBox(username);
-                        var checkname = simuser.get('name');
+                        var user = await Hive.openBox(username);
+                        //var simuser = await Hive.openBox(username);
+                        var checkname = user.get('name');
                         if (checkname != null) {
                           errorUserExist(context);
                         } else {
-                          var user = await Hive.openBox(username);
+
                           user.put('name', username);
                           user.put('password', pwd);
                           user.put('notes', userNotes);
@@ -501,14 +502,14 @@ class _userNoteEnterState extends State<userNoteEnter> {
     globals.userNotes = globals.account.get('notes');
   }
 
-  var usrnam = globals.account.get('name');
+  var usrnam = globals.nickname;
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("user Notes Handler"),
+          title: Text("Notes manager private"),
         ),
 
         body: ListView.builder(
@@ -532,7 +533,7 @@ class _userNoteEnterState extends State<userNoteEnter> {
                         }
                         noteDeletion();
                         Navigator.pop(context);
-                        Navigator.pushNamed(context, '/');
+                        Navigator.pushNamed(context, '/usrNotes');
                       },
                       child: const Icon(Icons.remove),
                     )
@@ -592,7 +593,7 @@ class _userNoteEnterState extends State<userNoteEnter> {
 logoutDialog(BuildContext context) {
   Widget logout = TextButton(
     onPressed: () async {
-      await globals.account.close();
+
       userDataRem() async {
         final usrSave = await SharedPreferences.getInstance();
           usrSave.setString('names', '');
@@ -692,7 +693,7 @@ class _usrNoteAddState extends State<usrNoteAdd> {
                               globals.account.put('notes', globals.userNotes);
                               Navigator.pop(context);
                               Navigator.pop(context);
-                              Navigator.pushNamed(context, '/');
+                              Navigator.pushNamed(context, '/usrNotes');
                             }
                           },
                           child: Text("Add"),
