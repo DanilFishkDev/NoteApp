@@ -255,12 +255,19 @@ class _signUpState extends State<signUp> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if(_formKey.currentState.validate()) {
-                        var user = await Hive.openBox(username);
-                        user.put('name', username);
-                        user.put('password', pwd);
-                        user.put('notes', userNotes);
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        var simuser = await Hive.openBox(username);
+                        var checkname = simuser.get('name');
+                        if (checkname != null) {
+                          errorUserExist(context);
+                        } else {
+                          var user = await Hive.openBox(username);
+                          user.put('name', username);
+                          user.put('password', pwd);
+                          user.put('notes', userNotes);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        }
+
                       }
                     },
                     child: Text("Sign Up"),
@@ -284,6 +291,34 @@ class _signUpState extends State<signUp> {
         )
     );
   }
+}
+
+errorUserExist(BuildContext context) {
+  Widget attempt = TextButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    child: Text('Ok'),
+  );
+  Widget alert = AlertDialog(
+    title: Text('User already Exist!'),
+    content: Column(
+      children: <Widget>[
+        Text('The user whose name you have taken, already exist!'),
+        Text('Please enter other name that not yet occupied'),
+      ]
+    ),
+    actions: [
+      attempt
+    ]
+  );
+
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      }
+  );
 }
 
 class toLogin extends StatefulWidget {
