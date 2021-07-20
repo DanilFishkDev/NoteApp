@@ -3,6 +3,7 @@ import 'globals.dart' as globals;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -245,7 +246,7 @@ class _signUpState extends State<signUp> {
                   validator: (String value) {
                     pwd = value;
                     if(value.isEmpty) {
-                      return "Please type the name";
+                      return "Please type the password";
                     }
                     return null;
                   }
