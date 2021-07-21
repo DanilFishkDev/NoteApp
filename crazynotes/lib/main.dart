@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
+import 'package:convert/convert.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -256,7 +258,17 @@ class _signUpState extends State<signUp> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if(_formKey.currentState.validate()) {
-                        var user = await Hive.openBox(username);
+
+                        final FlutterSecureStorage safeArea = const FlutterSecureStorage();
+                        var containsEncryptedKey = await safeArea.containsKey(key: 'key');
+                        if(!containsEncryptedKey) {
+                          var key = Hive.generateSecureKey();
+                          await safeArea.write(key: 'key', value: base64UrlEncode(key));
+                        }
+
+                        globals.encryptionKey = base64Url.decode(await safeArea.read(key: 'key'));
+
+                        var user = await Hive.openBox(username, encryptionCipher: HiveAesCipher(globals.encryptionKey));
                         //var simuser = await Hive.openBox(username);
                         var checkname = user.get('name');
                         if (checkname != null) {
@@ -395,7 +407,7 @@ class _loginState extends State<login> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if(_formKey.currentState.validate()) {
-                        var registered = await Hive.openBox(login);
+                        var registered = await Hive.openBox(login, encryptionCipher: HiveAesCipher(globals.encryptionKey));
                         var regName = registered.get('name');
                         if (regName == null) {
                           loginError(context);
@@ -499,7 +511,7 @@ class _userNoteEnterState extends State<userNoteEnter> {
     setState(() {
       globals.nickname = usrSave.getString('names') ?? 0;
     });
-    globals.account = await Hive.openBox(globals.nickname);
+    globals.account = await Hive.openBox(globals.nickname, encryptionCipher: HiveAesCipher(globals.encryptionKey));
     globals.userNotes = globals.account.get('notes');
   }
 

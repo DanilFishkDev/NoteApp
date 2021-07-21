@@ -10,3 +10,4 @@ String nickname = '';
 
 var account;
 List<String> userNotes = [];
+var encryptionKey;
