@@ -59,6 +59,7 @@ class _NoteCreatorState extends State<NoteCreator> {
   void initState() {
     super.initState();
     backupFetch();
+    userCheck();
   }
 
   void backupFetch() async {
@@ -66,6 +67,17 @@ class _NoteCreatorState extends State<NoteCreator> {
     setState(() {
       globals.NoteList = backup.getStringList('storage') ?? 0;
     });
+  }
+
+  void userCheck() async {
+    final usrSave = await SharedPreferences.getInstance();
+    setState(() {
+      globals.nickname = usrSave.getString('names') ?? 0;
+    });
+    if(globals.nickname != '') {
+      globals.encryptionKey = base64Url.decode(await globals.safeArea.read(key: 'key'));
+      Navigator.pushNamed(context, '/usrNotes');
+    }
   }
 
   @override
@@ -259,14 +271,14 @@ class _signUpState extends State<signUp> {
                     onPressed: () async {
                       if(_formKey.currentState.validate()) {
 
-                        final FlutterSecureStorage safeArea = const FlutterSecureStorage();
-                        var containsEncryptedKey = await safeArea.containsKey(key: 'key');
+
+                        var containsEncryptedKey = await globals.safeArea.containsKey(key: 'key');
                         if(!containsEncryptedKey) {
                           var key = Hive.generateSecureKey();
-                          await safeArea.write(key: 'key', value: base64UrlEncode(key));
+                          await globals.safeArea.write(key: 'key', value: base64UrlEncode(key));
                         }
 
-                        globals.encryptionKey = base64Url.decode(await safeArea.read(key: 'key'));
+                        globals.encryptionKey = base64Url.decode(await globals.safeArea.read(key: 'key'));
 
                         var user = await Hive.openBox(username, encryptionCipher: HiveAesCipher(globals.encryptionKey));
                         //var simuser = await Hive.openBox(username);
@@ -407,6 +419,7 @@ class _loginState extends State<login> {
                   child: ElevatedButton(
                     onPressed: () async {
                       if(_formKey.currentState.validate()) {
+                        globals.encryptionKey = base64Url.decode(await globals.safeArea.read(key: 'key'));
                         var registered = await Hive.openBox(login, encryptionCipher: HiveAesCipher(globals.encryptionKey));
                         var regName = registered.get('name');
                         if (regName == null) {
