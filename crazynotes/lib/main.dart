@@ -586,6 +586,12 @@ class _userNoteEnterState extends State<userNoteEnter> {
                     child: Text('Menu'),
                   ),
                   ListTile(
+                    title: Text('Greetings'),
+                    onTap: () {
+                      helloDialog(context);
+                    }
+                  ),
+                  ListTile(
                       title: Text('Logout'),
                       onTap: () {
                         logoutDialog(context);
@@ -614,6 +620,35 @@ class _userNoteEnterState extends State<userNoteEnter> {
         )
     );
   }
+}
+
+helloDialog(BuildContext context) {
+  var test = globals.account.get('name');
+  var usrname = globals.nickname;
+  Widget okButton = TextButton(
+    onPressed: () {
+      Navigator.pop(context);
+    },
+    child: Text('Cool'),
+  );
+  Widget hello = AlertDialog(
+    title: Text('Greetings'),
+    content: Column(
+      children: <Widget>[
+        Text('Hello $test!'),
+        Text('Whats up?'),
+      ]
+    ),
+    actions: [
+      okButton
+    ]
+  );
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return hello;
+      }
+  );
 }
 
 logoutDialog(BuildContext context) {
